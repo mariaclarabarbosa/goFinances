@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import uuid from 'react-native-uuid';
 
 import { useForm } from "react-hook-form";
+import { useNavigation } from '@react-navigation/native';
 
 import { Button } from "../../components/Form/Button";
 import { InputForm } from "../../components/Form/InputForm";
@@ -49,6 +50,7 @@ export function Register() {
       name: 'Categoria',
    });
    const dataKey = '@gofinances:transactions';
+   const navigation = useNavigation();
 
    const {
       control,
@@ -94,6 +96,7 @@ export function Register() {
             key: 'category',
             name: 'Categoria',
          });
+         navigation.navigate('Listagem');
       } catch (error) {
          console.log(error);
          Alert.alert('Não foi possível salvar');
