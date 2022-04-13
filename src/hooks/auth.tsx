@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import * as AuthSession from 'expo-auth-session';
 import AppleAuthentication from 'expo-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -35,6 +35,8 @@ const AuthContext = createContext({} as AuthContextData);
 
 function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<User>({} as User);
+    const [userStorageLoading, setUserStorageLoading] = useState(true);
+    const USER_STORAGE_KEY = '@gofinances:user';
 
     async function signInWithGoogle() {
         try {
@@ -54,7 +56,7 @@ function AuthProvider({ children }: AuthProviderProps) {
                     photo: userInfo.picture,
                 };
                 setUser(userLogged);
-                await AsyncStorage.setItem('@gofinances:user', JSON.stringify(userLogged));
+                await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userLogged));
             }
 
         } catch (error) {
@@ -78,12 +80,23 @@ function AuthProvider({ children }: AuthProviderProps) {
                     name: credential.fullName!.givenName!,
                 }
                 setUser(userLogged);
-                await AsyncStorage.setItem('@gofinances:user', JSON.stringify(userLogged));
+                await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userLogged));
             }
         } catch (error) {
             throw new Error(error);
         }
     }
+
+    useEffect(() => {
+        async function loadUserStorageData() {
+            const userStorage = await AsyncStorage.getItem(USER_STORAGE_KEY);
+            if (userStorage) {
+                setUser(JSON.parse(userStorage));
+            }
+            setUserStorageLoading(false);
+        }
+        loadUserStorageData();
+    }, [])
 
     return (
         <AuthContext.Provider value={{ user, signInWithGoogle, signInWithApple }}>
