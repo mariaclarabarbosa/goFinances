@@ -28,6 +28,7 @@ import {
    Fields,
    TransactionsTypes
 } from "./styles";
+import { useAuth } from "../../hooks/auth";
 
 interface FormData {
    name: string;
@@ -49,7 +50,8 @@ export function Register() {
       key: 'category',
       name: 'Categoria',
    });
-   const dataKey = '@gofinances:transactions';
+   const { user } = useAuth();
+   const dataKey = `@gofinances:transactions_user:${user.id}`;
    const navigation = useNavigation();
 
    const {

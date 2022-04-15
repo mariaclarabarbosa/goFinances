@@ -24,6 +24,7 @@ import { TransactionCardProps } from '../../components/TransactionCard';
 import { categories } from '../../utils/categories';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { ActivityIndicator } from 'react-native';
+import { useAuth } from '../../hooks/auth';
 
 interface CategoryName {
    key: string;
@@ -39,6 +40,7 @@ export function Resume() {
    const [totalByCategories, setTotalByCategories] = useState<CategoryName[]>([]);
    const [selectedDate, setSelectedDate] = useState(new Date());
    const theme = useTheme();
+   const { user } = useAuth();
 
    function handleDateChange(action: 'next' | 'prev') {
       setIsLoading(true);
@@ -50,7 +52,7 @@ export function Resume() {
    }
 
    async function loadData() {
-      const dataKey = '@gofinances:transactions';
+      const dataKey = `@gofinances:transactions_user:${user.id}`;
       const response = await AsyncStorage.getItem(dataKey);
       const transactions = response ? JSON.parse(response) : [];
 
