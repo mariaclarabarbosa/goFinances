@@ -19,9 +19,11 @@ import {
    Transactions,
    Title,
    TransactionList,
-   LoadContainer
+   LoadContainer,
+   LogoutButton
 } from './styles';
 import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../../hooks/auth';
 
 export interface DataListProps extends TransactionCardProps {
    id: string;
@@ -43,6 +45,7 @@ export function Dashboard() {
    const [highLightData, setHighLightData] = useState<HighLightData>();
    const [isLoading, setIsLoading] = useState(true);
    const theme = useTheme();
+   const { signOut, user } = useAuth();
    
    function getLastTransactionDate(collection: DataListProps[], type: 'positive' | 'negative') {
       const lastTransaction = new Date(Math.max.apply(Math, collection
@@ -139,13 +142,15 @@ export function Dashboard() {
                <Header>
                   <UserWrapper>
                      <UserInfo>
-                        <Photo source={{ uri: 'https://th.bing.com/th/id/OIP.pOEYVZbdpiUYPjnjhsoKGAHaE7?pid=ImgDet&rs=1' }} />
+                        <Photo source={{ uri: user.photo }} />
                         <User>
                            <UserGreeting>Olá,</UserGreeting>
-                           <UserName>Maria Clara</UserName>
+                           <UserName>{user.name}</UserName>
                         </User>
                      </UserInfo>
-                     <Icon name="power" />
+                     <LogoutButton onPress={signOut}>
+                        <Icon name="power" />
+                     </LogoutButton>
                   </UserWrapper>
                </Header>
                <HighLightCards>
